@@ -1,0 +1,78 @@
+- name: Install Dropbox based on the distribution and setup options
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    dropbox_rpm_url: "https://www.dropbox.com/download?dl=packages/fedora/nautilus-dropbox-2024.04.17-1.fc39.x86_64.rpm"
+    dropbox_deb_url: "https://www.dropbox.com/download?dl=packages/ubuntu/dropbox_2024.04.17_amd64.deb"
+    dropbox_headless_url: "https://www.dropbox.com/download?plat=lnx.x86_64"
+  tasks:
+    - name: Detect the distribution ID
+      ansible.builtin.shell: cat /etc/os-release | grep "^ID=" | cut -d= -f2
+      register: distro_id
+      changed_when: false
+    - name: Install Dropbox for Fedora systems
+      when: '"fedora" in distro_id.stdout'
+      block:
+        - name: Download Dropbox .rpm package for Fedora
+          ansible.builtin.get_url:
+            url: "{{ dropbox_rpm_url }}"
+            dest: "/tmp/dropbox.rpm"
+            mode: '0644'
+        - name: Install Dropbox package using dnf
+          ansible.builtin.dnf:
+            name: "/tmp/dropbox.rpm"
+            state: present
+            gpgcheck: no
+    - name: Install Dropbox for Debian/Ubuntu systems
+      when: '"ubuntu" in distro_id.stdout or "debian" in distro_id.stdout'
+      block:
+        - name: Download Dropbox .deb package
+          ansible.builtin.get_url:
+            url: "{{ dropbox_deb_url }}"
+            dest: "/tmp/dropbox.deb"
+            mode: '0644'
+        - name: Install Dropbox package using apt
+          ansible.builtin.apt:
+            deb: "/tmp/dropbox.deb"
+    - name: Headless installation of Dropbox
+      when: distro_id.stdout not in ["fedora", "ubuntu", "debian"]
+      block:
+        - name: Download and extract Dropbox daemon for headless installation
+          ansible.builtin.shell: |
+            cd ~ && wget -O - "{{ dropbox_headless_url }}" | tar xzf -
+          args:
+            executable: /bin/bash
+        - name: Run the Dropbox daemon for headless setup
+          ansible.builtin.shell: ~/.dropbox-dist/dropboxd
+          args:
+            executable: /bin/bash
+          async: 30
+          poll: 0
+          ignore_errors: true # You can remove this if you want to capture errors
+    - name: Ensure .config/autostart directory exists for GUI installations
+      when: '"fedora" in distro_id.stdout or "ubuntu" in distro_id.stdout or "debian" in distro_id.stdout'
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/autostart"
+        state: directory
+        mode: '0755'
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+    - name: Create Dropbox startup application for GUI installations
+      when: '"fedora" in distro_id.stdout or "ubuntu" in distro_id.stdout or "debian" in distro_id.stdout'
+      ansible.builtin.copy:
+        dest: "{{ ansible_env.HOME }}/.config/autostart/dropbox.desktop"
+        mode: '0644'
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        content: |
+          [Desktop Entry]
+          Name=Dropbox
+          GenericName=File Synchronizer
+          Comment=Sync your files across computers and to the web
+          Exec={{ ansible_env.HOME }}/.dropbox-dist/dropboxd
+          Terminal=false
+          Type=Application
+          Icon=dropbox
+          Categories=Network;FileTransfer;
+          StartupNotify=false

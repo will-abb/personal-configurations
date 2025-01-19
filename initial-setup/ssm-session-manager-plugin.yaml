@@ -1,0 +1,31 @@
+- name: Install AWS Session Manager Plugin
+  hosts: localhost
+  become: yes
+  vars:
+    session_manager_plugin_url: "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb"
+    session_manager_plugin_deb: "session-manager-plugin.deb"
+  tasks:
+    - name: Detect if system is Fedora
+      command: cat /etc/os-release
+      register: os_release_output
+      changed_when: false
+    - name: Install AWS Session Manager Plugin on Fedora
+      when: "'fedora' in os_release_output.stdout"
+      command: sudo dnf install -y https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm
+    - name: Download AWS Session Manager Plugin on Ubuntu/Debian
+      when: "'ubuntu' in os_release_output.stdout or 'debian' in os_release_output.stdout"
+      get_url:
+        url: "{{ session_manager_plugin_url }}"
+        dest: "/tmp/{{ session_manager_plugin_deb }}"
+    - name: Install AWS Session Manager Plugin on Ubuntu/Debian
+      when: "'ubuntu' in os_release_output.stdout or 'debian' in os_release_output.stdout"
+      apt:
+        deb: "/tmp/{{ session_manager_plugin_deb }}"
+    - name: Verify that the installation was successful
+      command: session-manager-plugin --version
+      register: session_manager_verification
+      tags: ssm
+    - name: Output verification result
+      debug:
+        msg: "{{ session_manager_verification.stdout }}"
+      tags: ssm

@@ -1,0 +1,3 @@
+* AWS Credentials
+1. It contains AWS configurations for both SSO and IAM logins.
+2. [[file:sts_aws_get_session_token.py][sts_aws_get_session_token.py]]: contains Python script to retrieve MFA token.

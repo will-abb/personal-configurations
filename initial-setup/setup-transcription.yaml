@@ -1,0 +1,50 @@
+- name: Set Up Whisper
+  hosts: localhost
+  gather_facts: no
+  vars:
+    transcription_branch: "6-8-2024"
+  tasks:
+    - name: Ensure virtualenv is installed
+      ansible.builtin.pip:
+        name: virtualenv
+        state: present
+    - name: Warning Ensure you are using Python 3.12 or a compatible version
+      ansible.builtin.debug:
+        msg: "This setup requires Python 3.12 or a compatible version. Please ensure your Python version is compatible before proceeding."
+    - name: Create a virtual environment named 'whisper'
+      ansible.builtin.command: virtualenv ~/virtual_environments/whisper
+      args:
+        creates: "~/virtual_environments/whisper"
+    - name: Install required Python packages in the virtual environment
+      ansible.builtin.pip:
+        name:
+          - setuptools
+          - wheel
+          - openai-whisper
+          - numpy
+          - scipy
+          - sounddevice
+          - pynput
+          - pyperclip
+        virtualenv: "~/virtual_environments/whisper"
+        virtualenv_command: ~/transcription/bin/python3
+        state: latest
+    - name: Ensure the destination directory exists
+      ansible.builtin.file:
+        path: ~/repositories/bitbucket/williseed1
+        state: directory
+        mode: '0755'
+    - name: Clone the transcription repository
+      ansible.builtin.git:
+        repo: git@bitbucket.org:williseed1/transcription.git
+        dest: ~/repositories/bitbucket/williseed1/transcription
+        update: yes
+    - name: Checkout specific branch
+      ansible.builtin.git:
+        repo: git@bitbucket.org:williseed1/transcription.git
+        dest: ~/repositories/bitbucket/williseed1/transcription
+        version: "origin/{{ transcription_branch }}"
+        update: yes
+    - name: Notify user to switch to the latest branch
+      ansible.builtin.debug:
+        msg: "Checked out the branch: {{ transcription_branch }}"

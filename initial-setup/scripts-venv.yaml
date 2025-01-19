@@ -1,0 +1,31 @@
+- name: Setup Selenium environment with virtual environment management
+  hosts: localhost
+  vars:
+    venv_dir: "~/virtual_environments/scripts"
+    packages:
+      - boto3
+      - crontab
+      - requests
+      - urllib3
+      - botocore
+      - atlassian-python-api
+      - wheel
+      - twine
+      - click
+      - jinja2
+      - terrasnek
+      - prettytable
+  tasks:
+    - name: Check if the virtual environment directory exists
+      stat:
+        path: "{{ venv_dir }}"
+      register: venv_stat
+    - name: Create the virtual environment if it doesn't exist
+      command: python3 -m venv "{{ venv_dir }}"
+      when: not venv_stat.stat.exists
+    - name: Upgrade pip in the virtual environment
+      command: "{{ venv_dir }}/bin/pip install --upgrade pip"
+      when: venv_stat.stat.exists
+    - name: Install required Python packages in the virtual environment
+      command: "{{ venv_dir }}/bin/pip install {{ item }}"
+      loop: "{{ packages }}"

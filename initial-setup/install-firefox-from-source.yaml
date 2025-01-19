@@ -1,0 +1,37 @@
+- name: Install Firefox
+  hosts: localhost
+  become: yes
+  vars:
+    date_suffix: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+  tasks:
+    - name: Download Firefox tarball
+      get_url:
+        url: "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US"
+        dest: "/tmp/firefox-latest.tar.bz2"
+        timeout: 60
+        force: true
+        validate_certs: true
+    - name: Rename existing Firefox directory if it exists
+      command: "mv /opt/firefox /opt/firefox-old-{{ date_suffix }}"
+      args:
+        creates: "/opt/firefox-old-{{ date_suffix }}"
+    - name: Create a directory for Firefox
+      file:
+        path: "/opt/firefox"
+        state: directory
+    - name: Extract Firefox tarball
+      unarchive:
+        src: "/tmp/firefox-latest.tar.bz2"
+        dest: "/opt/firefox"
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+    - name: Update symlink for Firefox
+      file:
+        src: "/opt/firefox/firefox"
+        dest: "/usr/local/bin/firefox"
+        state: link
+        force: yes
+    - name: Clean up temporary files
+      file:
+        path: "/tmp/firefox-latest.tar.bz2"
+        state: absent

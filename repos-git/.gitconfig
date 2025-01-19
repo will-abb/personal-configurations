@@ -1,0 +1,34 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	sshCommand = ssh -i ~/.ssh/id_rsa_per -o IdentitiesOnly=yes
+[remote "origin"]
+	url = git@bitbucket.org:williseed1/configs.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+[branch "6-8-2024"]
+	remote = origin
+	merge = refs/heads/6-8-2024
+	pushRemote = origin
+[user]
+	name = Will Bosch-Bello
+	email = williamsbosch@gmail.com
+
+
+[remote "origin"]
+url = ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/configs.git
+fetch = +refs/heads/*:refs/remotes/aws-codecommit/*
+[remote "origin"]
+url = git@github.com:will-abb/configs.git
+fetch = +refs/heads/*:refs/remotes/github/*
+
+[commit]
+gpgSign = true
+[user]
+signingKey = 76DF323656200BF9
+[secrets]
+	providers = /home/user/repositories/bitbucket/williseed1/configs/repos-git/.custom_git_secrets_provider.sh

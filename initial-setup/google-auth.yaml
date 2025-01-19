@@ -1,0 +1,24 @@
+- name: Setup Google Authenticator 2FA on Ubuntu or Fedora
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Determine the OS family
+      ansible.builtin.setup:
+        filter: ansible_os_family
+      register: os_info
+    - name: Install libpam-google-authenticator for Debian-based systems
+      ansible.builtin.apt:
+        name: libpam-google-authenticator
+        state: present
+      when: os_info.ansible_facts.ansible_os_family == "Debian"
+    - name: Install google-authenticator package for RedHat-based systems
+      ansible.builtin.dnf:
+        name: google-authenticator
+        state: present
+      when: os_info.ansible_facts.ansible_os_family == "RedHat"
+    - name: Display instructions for setting up Google Authenticator
+      ansible.builtin.debug:
+        msg:
+          - "To finish setting up Google Authenticator 2FA, please manually run 'google-authenticator' on your VM."
+          - "Follow the prompts to complete the setup: scan the QR code with your Authenticator app, and secure your emergency scratch codes."
+          - "You will need to answer some questions to tailor the security settings to your needs."

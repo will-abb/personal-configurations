@@ -1,0 +1,60 @@
+- name: Install Gradle
+  hosts: localhost
+  become: yes
+  vars:
+    gradle_version: 8.7
+    gradle_download_url: "https://services.gradle.org/distributions/gradle-{{ gradle_version }}-bin.zip"
+    gradle_install_dir: /opt/gradle
+    gradle_symlink_dir: /opt/gradle/latest
+  tasks:
+    - name: Update APT package list
+      apt:
+        update_cache: yes
+    - name: Install required dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - wget
+        - unzip
+    - name: Download Gradle
+      get_url:
+        url: "{{ gradle_download_url }}"
+        dest: /tmp/gradle-{{ gradle_version }}-bin.zip
+    - name: Create installation directory
+      file:
+        path: "{{ gradle_install_dir }}"
+        state: directory
+        mode: '0755'
+    - name: Unzip Gradle to the installation directory
+      unarchive:
+        src: /tmp/gradle-{{ gradle_version }}-bin.zip
+        dest: "{{ gradle_install_dir }}"
+        copy: no
+    - name: Create symbolic link to the latest version
+      file:
+        src: "{{ gradle_install_dir }}/gradle-{{ gradle_version }}"
+        dest: "{{ gradle_symlink_dir }}"
+        state: link
+    - name: Create profile script for Gradle
+      copy:
+        dest: /etc/profile.d/gradle.sh
+        content: |
+          export GRADLE_HOME={{ gradle_symlink_dir }}
+          export PATH=\${GRADLE_HOME}/bin:\${PATH}
+        mode: '0755'
+    - name: Load Gradle environment variables (bash)
+      shell: . /etc/profile.d/gradle.sh
+      ignore_errors: yes
+    - name: Verify Gradle installation
+      command: gradle -v
+      environment:
+        GRADLE_HOME: "{{ gradle_symlink_dir }}"
+        PATH: "{{ gradle_symlink_dir }}/bin:{{ ansible_env.PATH }}"
+      register: gradle_version_output
+    - name: Display Gradle version
+      debug:
+        msg: "{{ gradle_version_output.stdout }}"
+    - name: Notify user to add Gradle path to .cshrc
+      debug:
+        msg: "Please add the following line to your .zshrc file to set the Gradle path, :/opt/gradle/latest/bin:"

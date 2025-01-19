@@ -1,0 +1,22 @@
+- name: Install ansible-lint with virtual environment management
+  hosts: localhost
+  gather_facts: no
+  vars:
+    venv_dir: "~/virtual_environments/ansible-lint"
+  tasks:
+    - name: Check if the virtual environment directory exists
+      ansible.builtin.stat:
+        path: "{{ venv_dir }}"
+      register: venv_stat
+    - name: Create the virtual environment if it doesn't exist
+      ansible.builtin.command:
+        cmd: python3 -m venv "{{ venv_dir }}"
+      when: not venv_stat.stat.exists
+    - name: Upgrade pip in the virtual environment to the latest version
+      ansible.builtin.command:
+        cmd: "{{ venv_dir }}/bin/pip install --upgrade pip"
+      when: venv_stat.stat.exists or not venv_stat.stat.exists
+    - name: Install ansible-lint in the virtual environment
+      ansible.builtin.pip:
+        name: ansible-lint
+        executable: "{{ venv_dir }}/bin/pip"

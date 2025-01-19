@@ -1,0 +1,32 @@
+- name: Install ripgrep based on the OS
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  tasks:
+    - name: Detect OS distribution
+      ansible.builtin.set_fact:
+        is_fedora: "{{ ansible_facts['distribution'] == 'Fedora' }}"
+        is_debian: "{{ ansible_facts['distribution'] in ['Debian', 'Ubuntu'] }}"
+        is_kali: "{{ ansible_facts['distribution'] == 'Kali' }}"
+    - name: Install ripgrep using dnf (Fedora)
+      when: is_fedora
+      become: yes
+      ansible.builtin.dnf:
+        name: ripgrep
+        state: present
+    - name: Download ripgrep Debian package (Debian, Kali and Ubuntu)
+      when: is_debian
+      ansible.builtin.get_url:
+        url: "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep_14.1.1-1_amd64.deb"
+        dest: "/tmp/ripgrep_14.1.1-1_amd64.deb"
+        mode: '0444'
+    - name: Install ripgrep from Debian package (Debian, Kali and Ubuntu)
+      when: is_debian
+      become: yes
+      ansible.builtin.apt:
+        deb: "/tmp/ripgrep_14.1.1-1_amd64.deb"
+    - name: Remove the downloaded Debian package (Debian, Kali and Ubuntu)
+      when: is_debian
+      ansible.builtin.file:
+        path: "/tmp/ripgrep_14.1.1-1_amd64.deb"
+        state: absent

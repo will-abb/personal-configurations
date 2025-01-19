@@ -1,0 +1,33 @@
+#+title: Keyboardio Macros
+after esc add 50 ms delay
+1.
+2.
+3.
+4.
+5.
+6.
+7.
+8.
+9.
+10. esc space b k: kill buffer
+11. control a control x: cut all
+12. esc space tab ]: next workspace
+13. esc space g A:auto version control
+14. esc space z g: my chatgpt integrated
+15. esc space w C:close window/buffer
+16. hold alt + tap space: switch window
+17. space t m: open treemacs
+18. control c control c: confirm emacs
+19. alt tab: switch apps with icons
+20. space shift D: open download
+21. space d j: open dired
+22. control a control v: paste all
+23. control a control c: copy all
+24. esc space g g: magit status
+25. esc space  b B: search all buffers
+26. esc f w: send chatgpt prompt
+27. esc space n b: next buffer
+28.
+29. esc space t T: go to next vterm
+30. esc space b X: scratch buffer
+31. slack channel will:

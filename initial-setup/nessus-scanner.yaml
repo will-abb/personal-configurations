@@ -1,0 +1,36 @@
+- name: Install Nessus
+  hosts: localhost
+  become: yes
+  vars:
+    nessus_ubuntu_url: "https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-10.8.3-ubuntu1604_amd64.deb"
+    nessus_ubuntu_package: "Nessus-10.7.4-ubuntu1404_amd64.deb"
+    nessus_fedora_url: "https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-10.8.3-fc38.x86_64.rpm"
+    nessus_fedora_package: "Nessus-10.8.3-fc38.x86_64.rpm"
+  tasks:
+    - name: Determine the distribution
+      command: cat /etc/os-release
+      register: distro_info
+    - name: Set Nessus download URL and package for Ubuntu
+      set_fact:
+        nessus_url: "{{ nessus_ubuntu_url }}"
+        nessus_package: "{{ nessus_ubuntu_package }}"
+      when: "'ubuntu' in distro_info.stdout"
+    - name: Set Nessus download URL and package for Fedora
+      set_fact:
+        nessus_url: "{{ nessus_fedora_url }}"
+        nessus_package: "{{ nessus_fedora_package }}"
+      when: "'fedora' in distro_info.stdout"
+    - name: Download Nessus package
+      get_url:
+        url: "{{ nessus_url }}"
+        dest: "/tmp/{{ nessus_package }}"
+    - name: Install Nessus package on Ubuntu
+      apt:
+        deb: "/tmp/{{ nessus_package }}"
+      when: "'ubuntu' in distro_info.stdout"
+    - name: Install Nessus package on Fedora
+      dnf:
+        name: "/tmp/{{ nessus_package }}"
+        state: present
+        disable_gpg_check: yes
+      when: "'fedora' in distro_info.stdout"

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=$HOME/repositories/bitbucket/williseed1/configs/gpu/nvidiaperformance.sh
+Hidden=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+Name=NVIDIA Performance Optimization
+Comment=Set NVIDIA GPU to maximum performance mode.

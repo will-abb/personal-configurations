@@ -1,0 +1,59 @@
+- name: Generate GPG key and subkeys
+  hosts: localhost
+  gather_facts: no
+  vars:
+    key_size: "4096"
+    expiration: "0"
+    real_name: "Will Bosch-Bello"
+    email: "williamsbosch@gmail.com"
+    comment: "To be used for work"
+    passphrase_env: "{{ lookup('env', 'NEW_GPG_PASSWORD') }}"
+  tasks:
+    - name: Check if NEW_GPG_PASSWORD environment variable is set
+      fail:
+        msg: "Environment variable NEW_GPG_PASSWORD is not set. Please set it before running this playbook."
+      when: not passphrase_env
+    - name: Create GPG batch file for primary key generation
+      copy:
+        dest: /tmp/gpg_key_batch.conf
+        content: |
+          %echo Generating a new GPG primary key
+          Key-Type: RSA
+          Key-Length: {{ key_size }}
+          Key-Usage: sign,cert
+          Name-Real: "{{ real_name }}"
+          Name-Email: "{{ email }}"
+          Name-Comment: "{{ comment }}"
+          Expire-Date: {{ expiration }}
+          Passphrase: {{ passphrase_env }}
+          %commit
+          %echo Done
+    - name: Generate primary GPG key using batch file
+      command: >
+        gpg --batch --pinentry-mode loopback --passphrase "{{ passphrase_env }}" --gen-key /tmp/gpg_key_batch.conf
+
+    - name: Retrieve the primary key fingerprint
+      shell: "gpg --list-keys --with-colons --fingerprint {{ email }} | awk -F: '/^fpr:/ {print $10; exit}'"
+      register: gpg_fingerprint
+      changed_when: false
+    - name: Debug fingerprint value
+      debug:
+        msg: "Fingerprint value: {{ gpg_fingerprint.stdout }}"
+    - name: Add signing subkey
+      command: >
+        gpg --batch --pinentry-mode loopback --passphrase "{{ passphrase_env }}" --quick-add-key "{{ gpg_fingerprint.stdout }}" rsa4096 sign {{ expiration }}
+
+      when: gpg_fingerprint.stdout | length > 0
+    - name: Add encryption subkey
+      command: >
+        gpg --batch --pinentry-mode loopback --passphrase "{{ passphrase_env }}" --quick-add-key "{{ gpg_fingerprint.stdout }}" rsa4096 encrypt {{ expiration }}
+
+      when: gpg_fingerprint.stdout | length > 0
+    - name: Add authentication subkey
+      command: >
+        gpg --batch --pinentry-mode loopback --passphrase "{{ passphrase_env }}" --quick-add-key "{{ gpg_fingerprint.stdout }}" rsa4096 auth {{ expiration }}
+
+      when: gpg_fingerprint.stdout | length > 0
+    - name: Display instructions to move GPG keys to YubiKey manually
+      debug:
+        msg: "To move your GPG keys to the YubiKey manually: Run 'gpg --edit-key <fingerprint>', then at the 'gpg>' prompt, type 'key 1' followed by 'keytocard' and select '1' when prompted to move the signature key to slot 1. Repeat the same steps for 'key 2' and 'key 3', selecting slots '2' and '3' respectively for the encryption and authentication keys. Finally, type 'quit' and choose 'n' when asked to save changes to keep a local backup of the keys."

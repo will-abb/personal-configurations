@@ -1,0 +1,4 @@
+#+title: Debian
+** Issues
+1. Remove canonical livepatch as it crashes system
+2. Remove ubuntu specific snap/apt packages

@@ -1,0 +1,18 @@
+* General
+1. If you're having issues with the display driver you might want to boot a different kernel version. For some reason the latest was not working for me but this version is: 6.11.4-301.fc41.x86_64. List and choose correct index.
+   1.  Before you have the opportunity to set the kernel as your default you will have to choose the kernel which means that at boot time you must press the escape key then just continue to boot normally and then you should see the menu where the grub menu where it lets you choose
+2. So for some reason KDE and plasma in fedora worked fine with four screens but I needed my GPU my Nvidia so I need all my GPUs
+3.  If you have issues with gpg --card-edit or status for yubikey you might have to try a bunch of different things but eventually you will have to restart the service is what eventually did it for me: sudo systemctl restart pcscd
+   4. you need to go to "troubleshooting" in boot menu, not test or other boot options. This will give you the option to do safe graphics install
+#+begin_src bash
+sudo grubby --info=ALL
+sudo grubby --set-default-index=NUMBER
+#+end_src
+* KDE Plasma
+1. If using fedora use *gpg/gpg-generate-key-and-subkeys.yaml* to generate gpg keys for apps.
+2. You will need to open your wallet so apps can start up
+* Gnome
+1. use firewalld not ufw
+2. If there's an issue with the delete button or the manage container button being gone, you have to change your display settings to 100%. It just means that the display is not small enough for you to see everything(you have it over 100%)
+3. To paste with transcription enable: Remote Desktop: allow remote interaction.  This is an issue with Wayland. If that menu doesn't pop up, then you will have to, after you're done transcribing and a transcription is done, you will have to press the paste button. And that will paste it manually, whatever your transcription is.
+

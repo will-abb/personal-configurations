@@ -1,0 +1,16 @@
+- name: Setup Anki flashcards environment
+  hosts: localhost
+  become: no
+  gather_facts: no
+  tasks:
+    - name: Create virtual environment named anki
+      ansible.builtin.command:
+        cmd: python3 -m venv ~/anki
+        creates: ~/anki
+    - name: Install Python packages in the virtual environment
+      ansible.builtin.pip:
+        name:
+          - genanki
+          - PyYAML
+        virtualenv: ~/virtual_environments/anki
+        virtualenv_command: python3 -m venv

@@ -1,0 +1,48 @@
+- name: Setup Selenium environment with virtual environment management
+  hosts: localhost
+  vars:
+    venv_dir: "~/virtual_environments/selenium"
+    chromedriver_version: "130.0.6723.93"
+    chromedriver_platform: "linux64"
+    chromedriver_url: "https://storage.googleapis.com/chrome-for-testing-public/{{ chromedriver_version }}/{{ chromedriver_platform }}/chromedriver-{{ chromedriver_platform }}.zip"
+  tasks:
+    - name: Check if the virtual environment directory exists
+      stat:
+        path: "{{ venv_dir }}"
+      register: venv_stat
+    - name: Create the virtual environment if it doesn't exist
+      command: python3 -m venv "{{ venv_dir }}"
+      when: not venv_stat.stat.exists
+    - name: Install Selenium package in virtual environment
+      pip:
+        name: selenium
+        executable: "{{ venv_dir }}/bin/pip"
+    - name: Install Selenium package in virtual environment
+      pip:
+        name: webdriver_manager
+        executable: "{{ venv_dir }}/bin/pip"
+    - name: Download ChromeDriver
+      get_url:
+        url: "{{ chromedriver_url }}"
+        dest: "/tmp/chromedriver_{{ chromedriver_version }}_{{ chromedriver_platform }}.zip"
+    - name: Create a temporary directory for ChromeDriver extraction
+      ansible.builtin.tempfile:
+        state: directory
+      register: tmp_extraction_dir
+    - name: Unarchive ChromeDriver to the temporary directory
+      ansible.builtin.unarchive:
+        src: "/tmp/chromedriver_{{ chromedriver_version }}_{{ chromedriver_platform }}.zip"
+        dest: "{{ tmp_extraction_dir.path }}"
+        remote_src: yes
+    - name: Move ChromeDriver to the virtual environment's bin directory
+      command: mv "{{ tmp_extraction_dir.path }}/chromedriver-linux64/chromedriver" "~/virtual_environments/selenium/bin/chromedriver"
+      args:
+        removes: "{{ tmp_extraction_dir.path }}/chromedriver-linux64/chromedriver"
+    - name: Ensure ChromeDriver is executable
+      file:
+        path: "{{ venv_dir }}/bin/chromedriver"
+        mode: '0755'
+    - name: Remove the temporary extraction directory
+      file:
+        path: "{{ tmp_extraction_dir.path }}"
+        state: absent

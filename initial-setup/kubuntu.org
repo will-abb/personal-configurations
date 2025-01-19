@@ -1,0 +1,14 @@
+#+title: Kubuntu
+* KDE
+** KDE Kubuntu Wifi issues
+*** There is issues with wp3 so use =nmcli connection modify "NSA" 802-11-wireless-security.key-mgmt wpa-psk= to downgrade security in the meantime.
+** KDE Shortcuts issues: Make sure you enable them by adding a checkmark to the box where the shortcut resides.
+** Make sure to disable auto login in ~/etc/sddm.conf~
+* Dropbox
+** If you get "Dependency is not satisfiable: libpango1.0-0 (>= 1.36.3)\n" in ansible, just manually install package
+#+begin_src shell
+dpkg -i ~/Downloads/dropbox_2024.04.17_amd64.deb
+dropbox autostart
+dropbox stop
+dropbox start
+#+end_src

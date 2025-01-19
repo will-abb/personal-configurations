@@ -1,0 +1,213 @@
+* Setting Up All Your Tools From Scratch
+
+* Before Running Playbooks
+** Known Issues
+1. *Check OS-specific Documentation*: Before proceeding, consult the appropriate documentation for the operating system (e.g.,[[file:fedora.org][fedora.org]] ,[[file:windows/README.md][windows.md]] ,[[file:kali.org][ kali.org]], [[file:kubuntu.org][kubuntu.org]] ) to avoid setup issues.
+2. [[*Grub and Dual Booting Issues][Dual Booting GRUB Issues]], [[file:kubuntu.org][KDE Wifi Issues]], [[file:kubuntu.org][*KDE Shortcut Issues]], [[*GPU Issues][GPU/Display Issues]], [[*Chromium with wayland][Wayland Issues]]
+3. *Branch Management*: Always ensure you are on the latest branch when executing scripts or making changes.
+** To Get Started
+1. *Log Into Essential Accounts*: Log into Bitwarden then Firefox first, then proceed to log into Google, and finally Bitbucket.
+2. *Run Initial Setup Script*: Manually copy and execute *initial-shell-script.sh* in a local shell. This script will create SSH keys, essential directories, and other setup components. Keep the default ~id_rsa~ as your personal key until the setup is complete, after which you can switch to a different key if needed.
+3. *Activate Virtual Environment*: If needed, activate ansible virtual environment: =source ~/virtual_environments/ansible/bin/activate=
+4. *Helpful Tools*:
+   - Use *Terminator* as your terminal emulator and vim for text editing until emacs is available.
+   - Utilize Firefox’s Bitwarden sidebar for password management ~shift + alt + u~.
+
+* Playbooks and Setup
+1. [[file:install-apt-dnf-packages.yaml][install-apt-dnf-packages.yaml]]: Installs a range of software packages via apt or dnf. Remove/comment problematic entries or packages won't install, or just keep each package install as a separate task.
+2. [[file:install-snap-flatpak-packages.yaml][install-snap-flatpak-packages.yaml]]: Installs various software packages via snap or flatpak.
+3. [[file:install-ripgrep.yaml][install-ripgrep.yaml]]: Installs ripgrep.
+4. *start using and set up copyq*: If you're having issues, just use the gnome clipboard extension or KDE equivalent. [[*CopyQ Configuration][CopyQ Configuration]]
+5. [[file:doom-emacs.yaml][doom-emacs.yaml]]: Sets up Doom Emacs. Run =lall-the-icons-dired-mode= or =all-the-icons-install-fonts= and  =nerd-icons-install-fonts=. [[*Set up authinfo][Authinfo Issue]].
+6. *setup-genome-extensions*: setup genome extensions with these [[*Gnome][instructions]].
+7. [[file:oh-my-zsh.yaml][oh-my-zsh.yaml]]: Sets up Oh My Zsh.
+8. [[file:shell-configs.yaml][shell-configs.yaml]]: Sets up zsh and terminator configs.
+9. [[file:chrysalis-setup.yaml][chrysalis-setup.yaml]]: Sets up Chrysalis for keyboard.
+10. [[file:shortcuts/create-shortcuts.sh][create-shortcuts.sh]]: Creates Ubuntu gnome shortcuts. Look at its [[file:shortcuts/README.md][readme]] if needed. [[*Workspace Shortcut Issues][Workspace switch issues]].
+11. [[file:setup-transcription.yaml][setup-transcription.yaml]]: Sets up Whisper transcription. [[*Transcription Issues][Issue with just transcribing "you"]].
+12. [[file:nessus-scanner.yaml][nessus-scanner.yaml]]: Installs Nessus scanner.
+13. [[file:remove-default-applications.yaml][remove-default-applications.yaml]]: Removes certain default applications from Ubuntu systems.
+14. [[file:sops.yaml][sops.yaml]]: Installs SOPS (Secrets OPerationS).
+15. [[file:ssm-session-manager-plugin.yaml][ssm-session-manager-plugin.yaml]]: Installs the AWS Session Manager Plugin for secure, auditable instance management.
+16. [[file:terraform.yaml][terraform.yaml]]: Installs Terraform, an open-source infrastructure as code software tool.
+17. [[file:terraform-tools.yaml][terraform-tools.yaml]]: Installs Terraform tools.
+18. [[file:dropbox.yaml][dropbox.yaml]]: Dropbox setup. [[file:kubuntu.org][libpango issue fix]]
+19. [[file:terraform.yaml][terraform-docs.yaml]]: Installs Terraform Docs for generating documentation from Terraform modules.
+20. [[file:1password.yaml][1password.yaml]]: Sets up 1Password GUI and CLI.
+21. [[file:yubikey.yaml][yubikey.yaml]]: Sets up Yubikeys. Read instructions on the playbook prompt. Have keys unlocked or passwords ready beforehand. Have 1 key connected at the time. [[*Issues with Yubikey keys being recognized][Key recognition issue]].
+22. [[file:~/repositories/bitbucket/williseed1/configs/pam/README.md][copy pam files]]: Go to the PAM folder and copy the configs to finish Yubikey setup.
+23. [[file:google-auth.yaml][google-auth.yaml]]: Use google auth as Yubikey backup.
+24. [[file:scripts-venv.yaml][scripts-venv.yaml]]: Scripts virtualenv.
+25. [[file:docker-install.yaml][docker-install.yaml]]: Installs Docker. Run ~sudo usermod -aG docker $USER~ then logout and you will not have to use sudo.
+26. [[file:configure-ufw.sh][configure-ufw.sh]]: run =bash configure-ufw.sh=
+27. [[file:anki.yaml][anki.yml]]: Installs Anki.
+28. [[file:install-secret-tools.yaml][install-secret-tools.yaml]]: Sets up tools for secure secret management, including Vault and GPG. Adds gitleaks zsh auto-completion. To install trufflehog =sudo curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin=
+29. [[file:install-node-npm.yaml][install-node-npm.yaml]]:  install node.js and some LSP servers. [[*LSP][See for further setup]].
+30. [[file:~/repositories/bitbucket/williseed1/configs/repos-git/ssh.conf][ssh.conf]]: repos-git/ssh.conf, set up tramp and aws git. See [[*Git Repo Multiple Origins][setup]] for mor info
+31. [[file:~/repositories/bitbucket/williseed1/configs/gpg/GPG.md][GPG.md]]:  set up your Nano Key for signing commits, see section ~Using GPG to Sign Commits with a YubiKey~. The rest shows info on gpg ecncryption with yubikeys. For generating subkeys see below.
+32. [[file:~/repositories/bitbucket/williseed1/configs/gpg/gpg-generate-key-and-subkeys.yaml][gpg-generate-key-and-subkeys.yaml]]: use if you needd to generate yubikey subkeys again.
+33. [[file:clone-bitbucket-repos.py][clone-bitbucket-repos.py]]: run this with token exported to clone all repos.
+34. [[file:install-aws-vault.yaml][aws vault]]: needed for some emacs aws packages you found and use.
+35. [[file:set-emacs-default-app.yaml][set-emacs-default-app.yaml]]: Set Emacs as your default application for extensions.
+36. [[file:install-sam-cli.yaml][install-sam-cli.yaml]]: install serverless application tool. disable ufw to test locally.
+37. [[file:alpaca-offline-ai.yaml][alpaca-offline-ai.yaml]]:  Installs the AI manager with different models .
+38. [[*Firefox][Firefox]]: see to manage different profiles.
+39. [[*Vpn][vpn]]: set up vpn script so internet not cut off.
+40. [[file:install-shell-gpt.yaml][spgt]]: set up shell gpt. Alias sx run in venv and ~d~ deactivates it.
+** Optional Playbooks
+1. [[file:install-firefox-from-source.yaml][install-firefox-from-source.yaml]]: Use source code for firefox. [[*asking profile issue: If you use the shortcut for Firefox and it's still asking you every time to choose a profile, it's because your shell script is using a profile that doesn't exist.][Keeps asking for profile issue]].
+2. [[file:install-firefox-deb-file.yaml][install-firefox-deb-file.yaml]]: You should really just be doing it this way since Firefox does have packages. [[https://support.mozilla.org/en-US/kb/install-firefox-linux?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=firefox-download-thanks&_gl=1*112bjkn*_ga*MTgwNjIxNjM2LjE3MTE2NDkyMzI.*_ga_MQ7767QQQW*MTcxMzMyODA5OS4xLjEuMTcxMzMyODEwMi4wLjAuMA..#w_install-firefox-deb-package-for-debian-based-distributions][Install Firefox from .deb package for Debian-based distributions]].
+3. [[file:selenium.yaml][selenium.yaml]]: Install and set up Selenium.
+4. [[file:install-gradle.yaml][install-gradle.yaml]]: install gradle, then add to path in zsh configs.
+5. [[file:go-packages-install.yaml][go-packages-install.yaml]]: setup of Go.
+6. [[file:install-waterfox.yaml][install-waterfox.yaml]]: firefox spinoff.
+
+
+* Additional Configurations
+** 1Password with CLI and YubiKey Authentication
+*these have their ansible to help considerably*
+** 1password
+*** GUI Installation: Follow the guide at [1Password Installation for Linux](https://support.1password.com/install-linux/#debian-or-ubuntu).
+*** CLI Installation: Refer to [1Password CLI Getting Started Guide](https://developer.1password.com/docs/cli/get-started/).
+** YubiKey Authentication
+*** Follow the setup instructions at [Yubico's Ubuntu Linux Login Guide](https://support.yubico.com/hc/en-us/articles/360016649099-Ubuntu-Linux-Login-Guide-U2F).
+*** Ensure to check or copy the PAM configuration files in the ~pam~ directory of this repository.
+*** gpg and yubikey: https://support.yubico.com/hc/en-us/articles/360013790259-Using-Your-YubiKey-with-OpenPGP
+** CopyQ Configuration
+- Apply Settings:  wrap along text , close when unfocused , open windows on current screen , *auto start* , auto complete commands , store clipboard , store text selected using mouse , paste mouse selection with keyboard , run automatic commands on selection
+- Other settings:  maximum number of items 2000, set up gpg encryption, dark theme
+** Firefox
+*** create profile =firefox --no-remote --CreateProfile "work-profile"=
+*** use profile =firefox --no-remote --profile-manager -P "work-profile"=
+*** asking profile issue: If you use the shortcut for Firefox and it's still asking you every time to choose a profile, it's because your shell script is using a profile that doesn't exist.
+*** issues with not uploading files, a portal is needed to show the file picker `sudo apt install xdg-desktop-portal-gtk`
+** Git Repo Multiple Origins
+1. Dealing with multiple ssh keys copy file repos-git/ssh.conf to ~/.ssh/config
+2. There is an elisp function I made to fix .git/config file: ~my/git-config-add-github-aws-origins~.
+3. For codecommit ssh config you don't use your aws key id, it's your "ssh key id", check the ending to see if it's correct.
+4. If you're having issues check for restricons ont ip and mfa by iam policies , use user is ~codecommitpushpull~ with ssh key.
+** Gnome
+*** Gnome Extensions
+**** setup
+- install packages: gnome-shell-extensions chrome-gnome-shell (already done in ansible yaml)
+- you need to use the "extensions" app, not "gnome tweaks"
+- You will have to log in and out several times during changes.  when you install one you will have to log out, log back in and then try to enable because they will not show up until you log out.
+**** extensions
+1. Run ~gnome-shell --version~ for packages version to download. Choose your shell version and then the latest plugin version.
+2. Download the following:
+   - focus-highlighting: https://extensions.gnome.org/extension/4699/highlight-focus/
+   - astra monitor or system monitor: https://extensions.gnome.org/extension/4506/simple-system-monitor/
+   - openweather: https://extensions.gnome.org/extension/750/openweather/
+   - vital signs: https://extensions.gnome.org/extension/1460/vitals/
+   - utc clock: https://extensions.gnome.org/extension/1183/utcclock/
+   - clipboard: https://extensions.gnome.org/extension/4839/clipboard-history/
+3. bash [[file:install-gnome-shell-extesions.sh][install-gnome-shell-extesions.sh]], then logout.
+4. bash [[file:enable-gnome-shell-extensions.sh][enable-gnome-shell-extesions.sh]], then logout.
+5. =gnome-extensions list=: will provide correct name to install if needed.
+6. in ~tweaks~ change scaling factor to 1.4 and configure all of the plugins.
+7. log into the rest and configure your plugins
+***** [[*Fix gnome extension app not showing:][Issues with extension app]]
+*** Keyboard Shortcuts and Scripts
+- *Media Control and Window Management Scripts*:
+  - Microphone mute with ~Super + M~
+  - Switch windows directly ~Ctrl + Space~
+  - Auto-hide Dock Icons and disable show mounted devices if needed
+  - Click/Move Cursor Center (move window): ~alt + SPACE~
+- *Vim Keybindings with Vimium Plugins*:
+  - Firefox Vimium-ff: [Add-on Link](https://addons.mozilla.org/en-US/firefox/addon/vimium-ff/)
+  - Chrome Vimium: [Extension Link](https://chrome.google.com/webstore/detail/vimium/dbepggeogbaibhgnhhndojpepiihcmeb)
+- *Firefox or Waterfox Containers*:
+  - This allows you to have, for example, different, separate kind of sessions going on. So the good thing about this is you can have production account, development account, and UAT all open at the same time without logging out.
+  - use their control + shift + num shortcut
+  - Containers: [Add-on Link](https://support.mozilla.org/en-US/kb/containers)
+  - If Waterfox has issues opening links, make sure it's actually doing all the commands in the Ansible configuration.
+  - If there's an issue with the delete button or the manage container button being gone, you have to change your display settings to 100%. It just means that the display is not small enough for you to see everything(you have it over 100%)
+*** Gnome Boxes
+- Hit super + escape to inhibit shortcuts
+- To open an operating system that you already have on your drive, go ahead and run your script to mount the drive ~mount-ssd.sh~. Then go ahead and click + to create a new virtual machine and traverse all the way to the particular windows or linux image box that you've already created.
+** LSP
+1. Run the npm [[file:install-node-npm.yaml][playbook]] to install it.
+2. To make sure that Python actually catches all the modules in your virtual environment. Look in this repository for the pyright configuration file.
+3. *Look at pyrightconfigs:* ~/configs/python/pyrightconfig.json~
+** Systemd Services and Daemons
+*** Emacs daemon
+If you want to run the Emacs Daemon, set up a starting app and =emacs --fg-daemon= then create client sessions with =emacsclient -nc=.
+*** Vpn
+To not have the VPN cut off, cut you off from the internet, you can go to the VPN folder and follow the instructions there by copying that [[file:~/repositories/bitbucket/williseed1/configs/vpn/keep_default_route.sh][script]] to that location and following the commands on top.
+** Transcription and Whisper
+*use xorg instead of wayland in order to transcribe on all screens. Be aware of pros and cons*
+=bash -c "~/personal-repos/transcription/run-whisper.sh; exec bash"=
+** Trash
+Go into Recycle Bin Settings and change your file history duration to 30 days and then set your content to Automatically Delete also.
+** Ubuntu Pro (including Canonical Livepatch and Ubuntu Advantage)
+1. export UBUNTU_PRO_TOKEN=yourtokeninbitwarden
+2. run ~ubuntu-pro.yaml~. Don't worry if things fail. It's probably because they're they are already enabled or you're not allowed to enable them.
+** Update file locate db
+run after you're done with everything
+#+begin_src bash
+sudo updatedb
+#+end_src
+** RDP
+*** Freerdp
+- It shows up in wayland apps so you can switch to it
+#+begin_src bash
+xfreerdp /u:username /p:password /v:ip /size:1920x1080 /cert-ignore /bpp:32
+xfreerdp /u:will /p: /v:192.168.86.157 /size:1920x1080 /cert-ignore /bpp:32
+xfreerdp /u:will /p:your_password /v:192.168.86.157 /sound:sys:alsa /size:1920x1080 /cert-ignore /bpp:32
+#+end_src
+*** Remmina
+#+begin_src bash
+remmina -c ~/.local/share/remmina/personal-rdp-windows10-192-168-86-157.remmina
+remmina -c ~/.local/share/remmina/personal_rdp_windows10_desktop-8peh20r.remmina
+#+end_src
+*Remove Quit Verification*
+1. Navigate to the Remmina configuration directory:
+#+begin_src bash
+    vim ~/.config/remmina/remmina.pref
+#+end_src
+2. Change to false: ~confirm_close=false~
+** Set up authinfo
+1. You have "~/.authinfo.gpg" set up in emacs configs as path. Type the two below exactly as stated.  you might have to resync or reload Emacs, especially to get open AI to work, maybe en reboot, not sure.
+2. machine workname.atlassian.net login workemail@email.com password [jira token] port 443
+3. machine api.openai.com login org-ai password [open-ai-token]
+** Trufflehog
+To install:
+#+begin_src bash
+curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh -o install_trufflehog.sh
+sudo sh install_trufflehog.sh -b /usr/local/bin
+#+end_src
+
+* Known Issues
+** Workspace Shortcut Issues
+*** When using gnome, the ~switch to next app~ script won't work. Make sure you have an open application or windows in a second workspace to fix this.
+*** Get window app info command: Run =xprop= then click on windows
+*** If you have issues with shortcuts, make sure that when you're creating it you didn't mess up the path or something. Because it's a lot of text!!! Make sure that you change the "switch windows directly" to alt+space.
+*** If you have issues manually add/delete the keybind, if there was already one it needs to be reset this way. Happens with transcrioption shortcut.
+** Chromium with wayland
+- Use Chromium browser instead if you have issues with it not recognizing Firefox for your switching apps script.
+- Chromium also allows you to use your transcription over it, so you're able to use Wayland with it.
+- Probably a good idea to use chromium and chrome instead of firefox so that you can use wayland.
+** Issues with Yubikey keys being recognized
+I've had it happen that if you use the keys in another operating system like Windows 11, the key IDs will change. In this case, your keys will no longer be recognized because the ID has changed, so you will have to re-add them to the file used by PAM.
+=pamu2fcfg >> /etc/Yubico/u2f_keys=
+** Transcription Issues
+If you have issues with transcription only pasting one word, like "you", or not working properly, make sure that your microphone is not muted. If you're using Fedora, you can look at this red microphone and it should look like a normal microphone, not like a small or crossed out microphone.
+** Fix gnome extension app not showing:
+#+begin_src bash
+sudo apt remove --purge libnvidia-egl-wayland1
+sudo apt install libnvidia-egl-wayland1
+#+end_src
+** GPU Issues
+*** gpu/visual issues and linux kernel modules fix
+Basically what was happening is anytime they ask you for the password to load modules you are supposed to, when you get to that special blue screen when booting, enter your password and add the new key that’s allowed to sign modules. Don't just skip that part. This is needed to add the key the kernels are signed with.
+**** Video/Graphics Thigns that have worked
+1. change driver from 535 to 470
+2. =sudo nano /etc/modprobe.d/nvidia-drm.conf=, add ~options nvidia-drm modeset=1~. I did notice the gnome-control-center was gone but everything worked fine.
+3. fix extension app not showing:
+#+begin_src bash
+sudo apt remove --purge libnvidia-egl-wayland1
+sudo apt install libnvidia-egl-wayland1
+#+end_src
+The real fix here is you're probably gonna have to use a different display manager. Probably lightdm since it worked in debian os with gnome desktop environment. GDM3 has issues.
+** Grub and Dual Booting Issues
+if you have issues with the grub entries not showing up then you should go into system diagnostic diagnostics and then go into hard drive checks, do a quick check, and you should see the hard drives when you choose ~select hard drives~. Then go into the BIOS under uefi. Go to boot options under the advanced section, look for the SSD entry that doesn’t have a name like ubuntu, which should not be the first one, and move it to first, save and then you should be able to see both options show up both in the BIOS after booting to the first entry and rebooting

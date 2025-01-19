@@ -1,0 +1,24 @@
+- name: Set Emacs as default application for specific file types
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure xdg-utils is installed
+      apt:
+        name: xdg-utils
+        state: present
+    - name: Set Emacs as default for text/plain
+      command: xdg-mime default emacs.desktop text/plain
+    - name: Set Emacs as default for application/pdf
+      command: xdg-mime default emacs.desktop application/pdf
+    - name: Set Emacs as default for application/json
+      command: xdg-mime default emacs.desktop application/json
+    - name: Set Emacs as default for application/xml
+      command: xdg-mime default emacs.desktop application/xml
+    - name: Set Emacs as default for application/x-shellscript
+      command: xdg-mime default emacs.desktop application/x-shellscript
+    - name: Set Emacs as default for application/x-python
+      command: xdg-mime default emacs.desktop application/x-python
+    - name: Set Emacs as default for application/x-yaml
+      command: xdg-mime default emacs.desktop application/x-yaml
+    - name: Set Emacs as default for text/csv
+      command: xdg-mime default emacs.desktop text/csv

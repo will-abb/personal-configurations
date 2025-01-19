@@ -1,0 +1,29 @@
+- name: Install aws-vault on linux
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Fetch latest aws-vault version from GitHub
+      uri:
+        url: https://api.github.com/repos/99designs/aws-vault/releases/latest
+        return_content: yes
+      register: aws_vault_latest
+    - name: Extract latest version tag
+      set_fact:
+        aws_vault_version: "{{ aws_vault_latest.json.tag_name }}"
+    - name: Download aws-vault binary for Linux
+      get_url:
+        url: "https://github.com/99designs/aws-vault/releases/download/{{ aws_vault_version }}/aws-vault-linux-amd64"
+        dest: /usr/local/bin/aws-vault
+        mode: '0755'
+    - name: Ensure aws-vault is executable
+      file:
+        path: /usr/local/bin/aws-vault
+        mode: '0755'
+        state: file
+    - name: Display installation success message
+      debug:
+        msg: |
+          aws-vault {{ aws_vault_version }} has been successfully installed.
+          To use aws-vault with Doom Emacs AWS Mode:
+          1. Open Doom Emacs and run the "AWS Mode" command.
+          2. Follow the prompts to authenticate with SSO and enter your vault password.

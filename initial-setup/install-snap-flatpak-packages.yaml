@@ -1,0 +1,88 @@
+- name: Install and update packages using Snap or Flatpak based on OS
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Detect distribution
+      ansible.builtin.set_fact:
+        is_fedora: "{{ ansible_facts['distribution'] == 'Fedora' }}"
+        is_ubuntu: "{{ ansible_facts['distribution'] == 'Ubuntu' }}"
+    ########## Install Packages for Debian Based Systems ##########
+    - name: Ensure Flatpak is installed
+      apt:
+        name: flatpak
+        state: present
+        update_cache: true
+      when: is_ubuntu
+    - name: Add Flathub repository (Ubuntu)
+      command: flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+      when: is_ubuntu
+    - name: Refresh Snap packages
+      command: snap refresh
+      when: is_ubuntu
+    - name: Install Canonical Livepatch
+      community.general.snap:
+        name: canonical-livepatch
+        state: present
+      when: is_ubuntu
+    - name: Install Go using Snap
+      community.general.snap:
+        name: go
+        classic: yes
+        state: present
+      when: is_ubuntu
+    - name: Install Slack using Snap
+      community.general.snap:
+        name: slack
+        state: present
+      when: is_ubuntu
+    - name: Install Semgrep using Snap
+      community.general.snap:
+        name: semgrep
+        channel: latest/stable
+        state: present
+      when: is_ubuntu
+    - name: Install PowerShell using Snap
+      community.general.snap:
+        name: powershell
+        classic: true
+        channel: latest/stable
+        state: present
+      when: is_ubuntu
+    - name: Install Bash Language Server using Snap
+      community.general.snap:
+        name: bash-language-server
+        classic: true
+        channel: latest/stable
+        state: present
+      when: is_ubuntu
+    - name: Install Alpaca using Flatpak (Ubuntu)
+      flatpak:
+        name: com.github.alpacaapp.Alpaca
+        state: present
+      when: is_ubuntu
+    ########## Install Packages for Red Hat Based Systems ##########
+    - name: Ensure Flatpak is installed
+      dnf:
+        name: flatpak
+        state: present
+      when: is_fedora
+    - name: Add Flathub remote if not present
+      command: flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+      args:
+        creates: /var/lib/flatpak/repo/flathub.flatpakrepo
+      when: is_fedora
+    - name: Refresh Flatpak packages
+      command: flatpak update -y
+      when: is_fedora
+    - name: Install Slack using Flatpak
+      flatpak:
+        name: com.slack.Slack
+        state: present
+      when: is_fedora
+    - name: Install Alpaca using Flatpak (Fedora)
+      flatpak:
+        name: com.jeffser.Alpaca
+        state: present
+      when: is_fedora

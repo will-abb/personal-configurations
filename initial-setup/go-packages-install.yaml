@@ -1,0 +1,18 @@
+- name: Install dockfmt for Docker module in Doom Emacs
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Check if Go is installed via Snap
+      ansible.builtin.command: snap list go
+      register: go_snap_check
+      failed_when: "go_snap_check.stderr != '' and 'error: no matching snaps installed' not in go_snap_check.stderr"
+      changed_when: false
+    - name: Install Go using Snap
+      community.general.snap:
+        name: go
+        classic: yes
+      when: go_snap_check.rc != 0
+    - name: Install dockfmt
+      ansible.builtin.shell: /snap/bin/go install github.com/jessfraz/dockfmt@latest
+      args:
+        creates: "{{ ansible_env.HOME }}/go/bin/dockfmt"

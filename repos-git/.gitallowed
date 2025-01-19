@@ -1,0 +1,18 @@
+aws/configs/sts_aws_get_session_token.py:23:aws_access_key_id = new_credentials\["Credentials"\]\["AccessKeyId"\]
+aws/configs/sts_aws_get_session_token.py:24:aws_secret_access_key = new_credentials\["Credentials"\]\["SecretAccessKey"\]
+aws/configs/sts_aws_get_session_token.py:25:aws_session_token = new_credentials\["Credentials"\]\["SessionToken"\]
+aws/configs/credentials.conf:16:aws_access_key_id =
+aws/configs/credentials.conf:17:aws_secret_access_key =
+repos-git/gitleaks_README.md:93:0f4cc22064b38154fd57b22a6bef319bf32b6a50:.secrets.baseline:generic-api-key:123
+.gitleaksignore:1:0f4cc22064b38154fd57b22a6bef319bf32b6a50:.secrets.baseline:generic-api-key:123
+.gitleaksignore:2:8c355cdea3bf5d102534bded33eb4471ee8beaad:.secrets.baseline:generic-api-key:150
+.gitleaksignore:3:8c355cdea3bf5d102534bded33eb4471ee8beaad:.secrets.baseline:generic-api-key:138
+.gitleaks_baseline.json:20:  "Fingerprint": "110544316b12a5d713d8157375054b0fa804a1d7:.secrets.baseline:generic-api-key:150"
+.gitleaks_baseline.json:40:  "Fingerprint": "b3565569249f31a51d8b235aabb19ba0aab5988d:.gitleaks_baseline.json:generic-api-key:8"
+.gitleaks_baseline.json:60:  "Fingerprint": "b3565569249f31a51d8b235aabb19ba0aab5988d:.gitleaks_baseline.json:generic-api-key:9"
+.gitleaks_baseline.json:80:  "Fingerprint": "b3565569249f31a51d8b235aabb19ba0aab5988d:.gitleaks_baseline.json:generic-api-key:28"
+.gitleaks_baseline.json:100:  "Fingerprint": "b3565569249f31a51d8b235aabb19ba0aab5988d:.gitleaks_baseline.json:generic-api-key:29"
+.gitleaks_baseline.json:120:  "Fingerprint": "58b06142b3844a63c6df993fcd2ccc60925283c0:aws/configs/config.conf:generic-api-key:33"
+.gitleaks_baseline.json:140:  "Fingerprint": "58b06142b3844a63c6df993fcd2ccc60925283c0:aws/configs/config.conf:generic-api-key:78"
+repos-git/git_secrets_README.md:114:   db-username=
+repos-git/git_secrets_README.md:116:   dbusername:

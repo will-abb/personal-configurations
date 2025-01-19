@@ -1,0 +1,162 @@
+- name: Set up YubiKey for local login (Ubuntu and Fedora)
+  hosts: localhost
+  become: yes
+  vars_prompt:
+    - name: "user_name"
+      prompt: "Please enter the username"
+      private: no
+  vars:
+    secure_authfile_location: "/etc/Yubico/u2f_keys"
+    bio_authfile_location: "/etc/Yubico/bio_keys"
+    yubico_auth_tarball_url: "https://developers.yubico.com/yubioath-flutter/Releases/yubico-authenticator-latest-linux.tar.gz"
+    install_path: "/opt/yubico-authenticator"
+  tasks:
+    - name: Set user_home variable
+      set_fact:
+        user_home: "/home/{{ user_name }}"
+    - name: Detect OS family
+      ansible.builtin.shell: cat /etc/os-release | grep -w ID | cut -d'=' -f2 | tr -d '"'
+      register: os_distro
+      changed_when: false
+    - name: Install dependencies for Yubico Authenticator (Ubuntu)
+      ansible.builtin.apt:
+        name:
+          - pcscd
+          - gnome-screenshot
+        state: present
+      when: os_distro.stdout == "ubuntu"
+      tags: app
+    - name: Install dependencies for Yubico Authenticator (Fedora)
+      ansible.builtin.dnf:
+        name:
+          - pcsc-lite
+          - gnome-screenshot
+        state: present
+      when: os_distro.stdout == "fedora"
+      tags: app
+    - name: Enable and start pcscd service
+      ansible.builtin.systemd:
+        name: pcscd
+        enabled: yes
+        state: started
+      tags: app
+    - name: Create install directory for Yubico Authenticator
+      ansible.builtin.file:
+        path: "{{ install_path }}"
+        state: directory
+        mode: '0755'
+      tags: app
+    - name: Download Yubico Authenticator tarball
+      ansible.builtin.get_url:
+        url: "{{ yubico_auth_tarball_url }}"
+        dest: "/tmp/yubico-authenticator.tar.gz"
+      tags: app
+    - name: Extract Yubico Authenticator tarball to temporary directory
+      ansible.builtin.unarchive:
+        src: "/tmp/yubico-authenticator.tar.gz"
+        dest: "/tmp/"
+        remote_src: yes
+      tags: app
+    - name: Find extracted directory name
+      ansible.builtin.shell:
+        cmd: "ls /tmp/ | grep 'yubico-authenticator-' | head -n 1"
+      register: extracted_dir_name
+      changed_when: false
+      tags: app
+    - name: Debug extracted directory name
+      ansible.builtin.debug:
+        msg: "Extracted directory name: '{{ extracted_dir_name.stdout | trim }}'"
+      tags: app
+    - name: Move Yubico Authenticator to the desired location
+      ansible.builtin.shell:
+        cmd: |
+          rsync -a --remove-source-files /tmp/{{ extracted_dir_name.stdout | trim }}/ /opt/yubico-authenticator/
+          find /tmp/{{ extracted_dir_name.stdout | trim }} -depth -type d -exec rmdir {} \;
+      tags: app
+    - name: Set permissions for Yubico directory
+      ansible.builtin.file:
+        path: "{{ install_path }}"
+        state: directory
+        mode: '0755'
+      tags: app
+    - name: Run desktop integration script
+      ansible.builtin.command:
+        cmd: "./desktop_integration.sh"
+        chdir: "{{ install_path }}"
+      tags: app
+    - name: Install libpam-u2f (Ubuntu)
+      ansible.builtin.apt:
+        name: libpam-u2f
+        state: present
+      when: os_distro.stdout == "ubuntu"
+    - name: Install libpam-u2f (Fedora)
+      ansible.builtin.dnf:
+        name:
+          - pam-u2f
+          - pamu2fcfg
+          - libu2f-host
+        state: present
+      when: os_distro.stdout == "fedora"
+      ignore_errors: yes
+    - name: Create local Yubico config directory
+      ansible.builtin.file:
+        path: "{{ user_home }}/.config/Yubico"
+        state: directory
+        mode: '0755'
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+      become: no
+    - name: Ensure system-wide Yubico directory exists
+      ansible.builtin.file:
+        path: "/etc/Yubico"
+        state: directory
+        mode: '0755'
+    - name: Prompt for all keys to be removed
+      ansible.builtin.pause:
+        prompt: "Please remove all keys. Press Enter to continue."
+    - name: Associate Biometric Key with the account
+      ansible.builtin.pause:
+        prompt: "Please insert the Biometric key and press Enter to continue."
+    - name: Capture Biometric Key
+      ansible.builtin.shell:
+        cmd: pamu2fcfg
+      register: bio_key
+      become_user: "{{ user_name }}"
+      ignore_errors: yes # User interaction required, may cause task to appear failed
+    - name: Append Biometric Key to bio_keys file
+      ansible.builtin.lineinfile:
+        path: "{{ bio_authfile_location }}"
+        line: "{{ bio_key.stdout }}"
+        create: yes
+        mode: '0600'
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+    - name: Append Biometric Key to u2f_keys file
+      ansible.builtin.lineinfile:
+        path: "{{ secure_authfile_location }}"
+        line: "{{ bio_key.stdout }}"
+        create: yes
+        mode: '0600'
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+    - name: Prompt for NFC keys (regular keys)
+      ansible.builtin.pause:
+        prompt: "Please insert the NFC keys (regular keys) and press Enter to continue."
+    - name: Capture NFC Key
+      ansible.builtin.shell:
+        cmd: pamu2fcfg
+      register: nfc_key
+      become_user: "{{ user_name }}"
+      ignore_errors: yes # User interaction required, may cause task to appear failed
+    - name: Append NFC Key to u2f_keys file
+      ansible.builtin.lineinfile:
+        path: "{{ secure_authfile_location }}"
+        line: "{{ nfc_key.stdout }}"
+        create: yes
+        mode: '0600'
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+      ignore_errors: yes
+    - name: Notify user to double check the files
+      ansible.builtin.debug:
+        msg: "Please double check the contents of {{ secure_authfile_location }} and {{ bio_authfile_location }} to ensure the keys are correctly added."

@@ -1,0 +1,61 @@
+- name: Install Waterfox on Ubuntu
+  hosts: localhost
+  become: yes
+  vars:
+    waterfox_url: "https://cdn1.waterfox.net/waterfox/releases/latest/linux"
+    waterfox_version: "G6.5.1"
+  tasks:
+    # - name: Ensure required packages are installed
+    #   apt:
+    #     name:
+    #       - wget
+    #       - bzip2
+    #     state: present
+    - name: Remove existing Waterfox directory
+      file:
+        path: /opt/waterfox
+        state: absent
+      ignore_errors: yes
+    - name: Create directory for Waterfox
+      file:
+        path: /opt/waterfox
+        state: directory
+    - name: Download Waterfox tar.bz2
+      get_url:
+        url: "{{ waterfox_url }}"
+        dest: "/tmp/waterfox-{{ waterfox_version }}.tar.bz2"
+    - name: Extract Waterfox tar.bz2
+      unarchive:
+        src: "/tmp/waterfox-{{ waterfox_version }}.tar.bz2"
+        dest: /opt/waterfox
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+    - name: Create symbolic link for Waterfox
+      file:
+        src: /opt/waterfox/waterfox
+        dest: /usr/bin/waterfox
+        state: link
+    - name: Create Waterfox desktop entry
+      copy:
+        dest: /usr/share/applications/waterfox.desktop
+        content: |
+          [Desktop Entry]
+          Name=Waterfox
+          Comment=Browse the World Wide Web
+          Exec=/opt/waterfox/waterfox %u
+          Icon=/opt/waterfox/browser/chrome/icons/default/default128.png
+          Terminal=false
+          Type=Application
+          Categories=Network;WebBrowser;
+          MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
+    - name: Set Waterfox as the default web browser
+      shell: |
+        xdg-settings set default-web-browser waterfox.desktop
+        xdg-mime default waterfox.desktop x-scheme-handler/http
+        xdg-mime default waterfox.desktop x-scheme-handler/https
+      args:
+        executable: /bin/bash
+    - name: Clean up temporary files
+      file:
+        path: "/tmp/waterfox-{{ waterfox_version }}.tar.bz2"
+        state: absent

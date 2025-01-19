@@ -1,0 +1,53 @@
+- name: Install Dependencies and Tools
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Gather facts about the system
+      ansible.builtin.setup:
+        filter: ansible_distribution
+    - name: Update package cache (Fedora)
+      dnf:
+        update_cache: yes
+      when: ansible_distribution == "Fedora"
+    - name: Update package cache (Debian/Ubuntu)
+      apt:
+        update_cache: yes
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+    - name: Install Node.js and npm (Fedora)
+      dnf:
+        name:
+          - nodejs
+          - npm
+        state: present
+      when: ansible_distribution == "Fedora"
+    - name: Install Node.js and npm (Debian/Ubuntu)
+      apt:
+        name:
+          - nodejs
+          - npm
+        state: present
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+    - name: Verify Node.js version
+      command: node -v
+      register: node_version
+      ignore_errors: yes
+    - name: Print Node.js version
+      debug:
+        msg: "Node.js version installed: {{ node_version.stdout }}"
+    - name: Verify npm version
+      command: npm -v
+      register: npm_version
+      ignore_errors: yes
+    - name: Print npm version
+      debug:
+        msg: "npm version installed: {{ npm_version.stdout }}"
+    - name: Install bash-language-server globally
+      npm:
+        name: bash-language-server
+        global: yes
+        state: latest
+    - name: Install tree-sitter-cli globally
+      npm:
+        name: tree-sitter-cli
+        global: yes
+        state: latest

@@ -1,0 +1,54 @@
+- name: Install Infracost, TFLint, Tfsec, and Terraform Language Server
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Gather OS family
+      ansible.builtin.setup:
+        filter: ansible_os_family
+      register: os_info
+    - name: Download Infracost install script
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh
+        dest: /tmp/install_infracost.sh
+        mode: "0755"
+    - name: Execute Infracost install script
+      shell: bash /tmp/install_infracost.sh
+    - name: Verify Infracost installation
+      command: infracost --version
+      register: infracost_version
+      failed_when: false
+    - name: Install TFLint
+      shell: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+    - name: Verify TFLint installation
+      command: tflint --version
+      register: tflint_version
+      failed_when: false
+    - name: Install Tfsec
+      shell: curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+    - name: Verify Tfsec installation
+      command: tfsec --version
+      register: tfsec_version
+      failed_when: false
+    - name: Install Terraform Language Server for Debian-based systems
+      apt:
+        name: terraform-ls
+        state: latest
+      when: os_info.ansible_facts.ansible_os_family == "Debian"
+    - name: Install Terraform Language Server for Fedora-based systems
+      shell: |
+        curl -LO https://releases.hashicorp.com/terraform-ls/$(curl -s https://api.github.com/repos/hashicorp/terraform-ls/releases/latest | jq -r '.tag_name' | sed 's/^v//')/terraform-ls_$(curl -s https://api.github.com/repos/hashicorp/terraform-ls/releases/latest | jq -r '.tag_name' | sed 's/^v//')_linux_amd64.zip
+        unzip terraform-ls_*_linux_amd64.zip
+        mv terraform-ls /usr/local/bin/
+        chmod +x /usr/local/bin/terraform-ls
+      when: os_info.ansible_facts.ansible_os_family == "RedHat"
+    - name: Verify Terraform Language Server installation
+      command: terraform-ls --version
+      register: terraform_ls_version
+      failed_when: false
+    - name: Print versions of installed tools
+      debug:
+        msg:
+          - "Infracost: {{ infracost_version.stdout }}"
+          - "TFLint: {{ tflint_version.stdout }}"
+          - "Tfsec: {{ tfsec_version.stdout }}"
+          - "Terraform Language Server: {{ terraform_ls_version.stdout }}"

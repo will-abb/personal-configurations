@@ -1,0 +1,124 @@
+- name: Install Docker Engine
+  hosts: localhost
+  become: yes
+  vars:
+    ubuntu_packages_to_remove:
+      - docker.io
+      - docker-doc
+      - docker-compose
+      - docker-compose-v2
+      - podman-docker
+      - containerd
+      - runc
+    fedora_packages_to_remove:
+      - docker
+      - docker-client
+      - docker-client-latest
+      - docker-common
+      - docker-latest
+      - docker-latest-logrotate
+      - docker-logrotate
+      - docker-selinux
+      - docker-engine-selinux
+      - docker-engine
+    docker_packages_ubuntu:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    docker_packages_fedora:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+  tasks:
+    - name: Determine the operating system
+      ansible.builtin.setup:
+        filter: ansible_distribution*
+    - name: Check for containers-common package (Fedora)
+      ansible.builtin.shell: "dnf list installed containers-common"
+      register: containers_common_check
+      ignore_errors: yes
+      when: ansible_distribution == "Fedora"
+    - name: Attempt to resolve potential conflicts (Fedora)
+      ansible.builtin.shell: "dnf remove containers-common -y"
+      when: ansible_distribution == "Fedora" and containers_common_check.rc == 0
+    - name: Remove old Docker packages (Ubuntu)
+      apt:
+        name: "{{ ubuntu_packages_to_remove }}"
+        state: absent
+        purge: yes
+        autoremove: yes
+      when: ansible_distribution == "Ubuntu"
+    - name: Remove old Docker packages (Fedora)
+      dnf:
+        name: "{{ fedora_packages_to_remove }}"
+        state: absent
+        autoremove: yes
+        skip_broken: true
+      when: ansible_distribution == "Fedora"
+      ignore_errors: true
+    - name: Install dependencies for Docker installation (Ubuntu)
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+    - name: Install dependencies for Docker installation (Fedora)
+      dnf:
+        name: dnf-plugins-core
+        state: present
+      when: ansible_distribution == "Fedora"
+    - name: Add Docker’s official GPG key (Ubuntu)
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+        state: present
+        keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+      when: ansible_distribution == "Ubuntu"
+    - name: Set up the Docker repository on Ubuntu
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+        state: present
+        filename: docker
+      when: ansible_distribution == "Ubuntu"
+    - name: Add Docker repository on Fedora
+      ansible.builtin.command:
+        cmd: dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+      when: ansible_distribution == "Fedora"
+    - name: Update the apt package index (Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_distribution == "Ubuntu"
+    - name: Update the dnf package index (Fedora)
+      ansible.builtin.dnf:
+        update_cache: yes
+      when: ansible_distribution == "Fedora"
+    - name: Install Docker Engine and components (Ubuntu)
+      apt:
+        name: "{{ docker_packages_ubuntu }}"
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+    - name: Install Docker Engine and components (Fedora)
+      dnf:
+        name: "{{ docker_packages_fedora }}"
+        state: latest
+      when: ansible_distribution == "Fedora"
+    - name: Enable and start Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: Verify Docker Engine installation
+      command: docker run hello-world
+      register: hello_world_output
+      ignore_errors: yes
+    - name: Show output of Docker hello-world
+      debug:
+        var: hello_world_output.stdout_lines

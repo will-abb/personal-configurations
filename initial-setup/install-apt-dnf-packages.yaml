@@ -1,0 +1,826 @@
+- name: Install and update various software packages
+  hosts: localhost
+  become: true
+  connection: local
+  gather_facts: true
+  tasks:
+    ############### Update Packages for All Distro ###############
+    - name: Update APT cache and upgrade all packages (Ubuntu and Kali)
+      apt:
+        update_cache: true
+        upgrade: 'yes'
+        cache_valid_time: 86400
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Update DNF packages (Fedora)
+      dnf:
+        name: "*"
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    ########## Install Packages for Debian Based Systems ##########
+    - name: Install ubuntu-advantage-tools
+      apt:
+        name: ubuntu-advantage-tools
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install fd-find
+      apt:
+        name: fd-find
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install snapd
+      apt:
+        name: snapd
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install pandoc
+      apt:
+        name: pandoc
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install libpam-google-authenticator
+      apt:
+        name: libpam-google-authenticator
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install cmake
+      apt:
+        name: cmake
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install libtool
+      apt:
+        name: libtool
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install locate
+      apt:
+        name: locate
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install zsh
+      apt:
+        name: zsh
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install wget
+      apt:
+        name: wget
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install curl
+      apt:
+        name: curl
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install git
+      apt:
+        name: git
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install xclip
+      apt:
+        name: xclip
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install gnome-tweaks
+      apt:
+        name: gnome-tweaks
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install gnupg
+      apt:
+        name: gnupg
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install software-properties-common
+      apt:
+        name: software-properties-common
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install pre-commit
+      apt:
+        name: pre-commit
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install gnome-boxes
+      apt:
+        name: gnome-boxes
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install terminator
+      apt:
+        name: terminator
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install remmina
+      apt:
+        name: remmina
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install python3-virtualenv
+      apt:
+        name: python3-virtualenv
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install unzip
+      apt:
+        name: unzip
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install portaudio19-dev
+      apt:
+        name: portaudio19-dev
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install python3-venv
+      apt:
+        name: python3-venv
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install jq
+      apt:
+        name: jq
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install amazon-ecr-credential-helper
+      apt:
+        name: amazon-ecr-credential-helper
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install scdaemon
+      apt:
+        name: scdaemon
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install lynis
+      apt:
+        name: lynis
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install clamav
+      apt:
+        name: clamav
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install simplescreenrecorder
+      apt:
+        name: simplescreenrecorder
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install kdenlive
+      apt:
+        name: kdenlive
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install vlc
+      apt:
+        name: vlc
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install ntpdate
+      apt:
+        name: ntpdate
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install libpam-tmpdir
+      apt:
+        name: libpam-tmpdir
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install apt-listchanges
+      apt:
+        name: apt-listchanges
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install needrestart
+      apt:
+        name: needrestart
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install fail2ban
+      apt:
+        name: fail2ban
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install git-secrets
+      apt:
+        name: git-secrets
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install grub2-common
+      apt:
+        name: grub2-common
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install ansible
+      apt:
+        name: ansible
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install shfmt
+      apt:
+        name: shfmt
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install black
+      apt:
+        name: black
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install shellcheck
+      apt:
+        name: shellcheck
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install pyflakes3
+      apt:
+        name: pyflakes3
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install rkhunter
+      apt:
+        name: rkhunter
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install anki
+      apt:
+        name: anki
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install tree
+      apt:
+        name: tree
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install trash-cli
+      apt:
+        name: trash-cli
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install htop
+      apt:
+        name: htop
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install wmctrl
+      apt:
+        name: wmctrl
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install chrome-gnome-shell
+      apt:
+        name: chrome-gnome-shell
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install gnome-shell-extensions
+      apt:
+        name: gnome-shell-extensions
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install gnome-shell-pomodoro
+      apt:
+        name: gnome-shell-pomodoro
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install mpg123
+      apt:
+        name: mpg123
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install graphviz
+      apt:
+        name: graphviz
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install gparted
+      apt:
+        name: gparted
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install plantuml
+      apt:
+        name: plantuml
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install chromium-browser
+      apt:
+        name: chromium-browser
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install wireguard
+      apt:
+        name: wireguard
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install resolvconf
+      apt:
+        name: resolvconf
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install xdotool
+      apt:
+        name: xdotool
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install freerdp2-x11
+      apt:
+        name: freerdp2-x11
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install python3-gpg
+      apt:
+        name: python3-gpg
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install sqlite3
+      apt:
+        name: sqlite3
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install fuse
+      apt:
+        name: fuse
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install libfuse2
+      apt:
+        name: libfuse2
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install ffmpeg
+      apt:
+        name: ffmpeg
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install copyq
+      apt:
+        name: copyq
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install OpenVPN and KDE Network Manager plugin (Kubuntu-based systems)
+      apt:
+        name:
+          - openvpn
+          - network-manager-openvpn
+          - network-manager-openvpn-gnome
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    - name: Install xdg-desktop-portal-gtk for firefox file uploads
+      apt:
+        name: xdg-desktop-portal-gtk
+        state: latest
+      when: ansible_facts['distribution'] in ['Ubuntu', 'Kali']
+      ignore_errors: true
+    ########## Install Packages for Red Hat Based Systems ##########
+    - name: Install fd-find
+      dnf:
+        name: fd-find
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install snapd
+      dnf:
+        name: snapd
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install pandoc
+      dnf:
+        name: pandoc
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install google-authenticator
+      dnf:
+        name: google-authenticator
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install cmake
+      dnf:
+        name: cmake
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install libtool
+      dnf:
+        name: libtool
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install findutils
+      dnf:
+        name: findutils
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install zsh
+      dnf:
+        name: zsh
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install wget
+      dnf:
+        name: wget
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install curl
+      dnf:
+        name: curl
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install git
+      dnf:
+        name: git
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install xclip
+      dnf:
+        name: xclip
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install gnome-tweaks
+      dnf:
+        name: gnome-tweaks
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install gnupg
+      dnf:
+        name: gnupg
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install pre-commit
+      dnf:
+        name: pre-commit
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install gnome-boxes
+      dnf:
+        name: gnome-boxes
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install terminator
+      dnf:
+        name: terminator
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install remmina
+      dnf:
+        name: remmina
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install python3-virtualenv
+      dnf:
+        name: python3-virtualenv
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install copyq
+      dnf:
+        name: copyq
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install unzip
+      dnf:
+        name: unzip
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install portaudio
+      dnf:
+        name: portaudio
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install jq
+      dnf:
+        name: jq
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install lynis
+      dnf:
+        name: lynis
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install clamav
+      dnf:
+        name: clamav
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install kdenlive
+      dnf:
+        name: kdenlive
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install vlc
+      dnf:
+        name: vlc
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install chrony
+      dnf:
+        name: chrony
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install dnf-plugin-system-upgrade
+      dnf:
+        name: dnf-plugin-system-upgrade
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install needrestart
+      dnf:
+        name: needrestart
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install fail2ban
+      dnf:
+        name: fail2ban
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install git-secrets
+      dnf:
+        name: git-secrets
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install grub2-tools
+      dnf:
+        name: grub2-tools
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install ansible
+      dnf:
+        name: ansible
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install shfmt
+      dnf:
+        name: shfmt
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install black
+      dnf:
+        name: black
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install ShellCheck
+      dnf:
+        name: ShellCheck
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install python3-pyflakes
+      dnf:
+        name: python3-pyflakes
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install rkhunter
+      dnf:
+        name: rkhunter
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install tree
+      dnf:
+        name: tree
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install trash-cli
+      dnf:
+        name: trash-cli
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install htop
+      dnf:
+        name: htop
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install wmctrl
+      dnf:
+        name: wmctrl
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install gnome-extensions-app
+      dnf:
+        name: gnome-extensions-app
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install gnome-pomodoro
+      dnf:
+        name: gnome-pomodoro
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install mpg123
+      dnf:
+        name: mpg123
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install graphviz
+      dnf:
+        name: graphviz
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install gparted
+      dnf:
+        name: gparted
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install plantuml
+      dnf:
+        name: plantuml
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install chromium
+      dnf:
+        name: chromium
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install wireguard-tools
+      dnf:
+        name: wireguard-tools
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install xdotool
+      dnf:
+        name: xdotool
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install freerdp
+      dnf:
+        name: freerdp
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install python3-gpg
+      dnf:
+        name: python3-gpg
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install sqlite
+      dnf:
+        name: sqlite
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install fuse-libs
+      dnf:
+        name: fuse-libs
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install golang
+      dnf:
+        name: golang
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install emacs
+      dnf:
+        name: emacs
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install kwallet-pam
+      dnf:
+        name: kwallet-pam
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install python3.12
+      dnf:
+        name: python3.12
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install python3.12-devel
+      dnf:
+        name: python3.12-devel
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install npm
+      dnf:
+        name: npm
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true
+    - name: Install OpenVPN and KDE Network Manager plugin (Fedora-based systems)
+      dnf:
+        name:
+          - openvpn
+          - NetworkManager-openvpn
+          - NetworkManager-openvpn-gnome
+        state: latest
+      when: ansible_facts['distribution'] == 'Fedora'
+      ignore_errors: true

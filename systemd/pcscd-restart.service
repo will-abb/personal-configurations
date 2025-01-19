@@ -1,0 +1,8 @@
+[Unit]
+Description=Restart pcscd service and check GPG card status. This is because yubikey nano cards are not being recognized automatically.
+After=default.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'sudo systemctl restart pcscd && sleep 2 && gpg --card-status'
+User=user

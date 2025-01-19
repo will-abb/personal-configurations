@@ -1,0 +1,13 @@
+{
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__"
+  ],
+  "reportMissingImports": true,
+  "pythonVersion": "3.10",
+  "venvPath": "~/virtual_environments",
+  "venv": "scripts"
+}

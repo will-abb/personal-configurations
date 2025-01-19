@@ -1,0 +1,38 @@
+- name: Install Doom Emacs
+  hosts: localhost
+  gather_facts: true
+  vars:
+    doom_emacs_branch: "oct-5-2024-org-config"
+    ssh_key_path: "~/.ssh/id_rsa_per"
+  tasks:
+    - name: Empty Doom Emacs installation directory
+      command: rm -rf ~/.emacs.d
+    - name: Clone Doom Emacs repository
+      git:
+        repo: 'https://github.com/doomemacs/doomemacs.git'
+        dest: '~/.emacs.d/'
+        depth: 1
+        update: true
+    - name: Install Doom Emacs non-interactively
+      shell: "yes | ~/.emacs.d/bin/doom install"
+    - name: Remove existing Doom Emacs config directory
+      file:
+        path: "{{ ansible_env.HOME }}/.doom.d"
+        state: absent
+    - name: Clone Doom Emacs config repository with specific SSH key
+      git:
+        repo: 'git@bitbucket.org:williseed1/.doom.d.git'
+        dest: "{{ ansible_env.HOME }}/.doom.d"
+        update: true
+        ssh_opts: "-i {{ ssh_key_path }}"
+      tags: ["doom-configs"]
+    - name: Checkout specific branch in Doom Emacs config repository
+      git:
+        repo: 'git@bitbucket.org:williseed1/.doom.d.git'
+        dest: "{{ ansible_env.HOME }}/.doom.d"
+        version: "origin/{{ doom_emacs_branch }}"
+        ssh_opts: "-i {{ ssh_key_path }}"
+      tags: ["doom-configs"]
+    - name: Synchronize Doom Emacs
+      shell: "~/.emacs.d/bin/doom sync"
+      tags: ["doom-configs"]

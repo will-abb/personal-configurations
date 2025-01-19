@@ -1,0 +1,14 @@
+{
+  "keyMappings": "mapkey <c-e>  <c-[>\nmapkey <a-e>  <c-[>\nmapkey <m-e>  <c-[>\nmap <c-d> scrollPageDown\nmap <c-u> scrollPageUp",
+  "settingsVersion": "2.0.6",
+  "exclusionRules": [
+    {
+      "passKeys": "",
+      "pattern": "https?://mail.google.com/*"
+    },
+    {
+      "passKeys": "",
+      "pattern": "https?://keep.google.com/*"
+    }
+  ]
+}

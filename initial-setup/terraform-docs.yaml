@@ -1,0 +1,21 @@
+- name: Install Terraform Docs
+  hosts: localhost
+  become: yes # Using sudo for the installation
+  tasks:
+    - name: Download Terraform Docs tar.gz
+      ansible.builtin.get_url:
+        url: "https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz"
+        dest: "/tmp/terraform-docs.tar.gz"
+        mode: '0644'
+    - name: Extract Terraform Docs
+      ansible.builtin.unarchive:
+        src: "/tmp/terraform-docs.tar.gz"
+        dest: "/tmp"
+        remote_src: yes
+    - name: Make Terraform Docs executable
+      ansible.builtin.file:
+        path: "/tmp/terraform-docs"
+        mode: '0755'
+    - name: Move Terraform Docs to /usr/local/bin
+      ansible.builtin.command:
+        cmd: mv /tmp/terraform-docs /usr/local/bin/terraform-docs

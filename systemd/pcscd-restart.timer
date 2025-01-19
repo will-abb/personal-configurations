@@ -1,0 +1,8 @@
+[Unit]
+Description=Timer to restart pcscd service after boot and login
+
+[Timer]
+OnBootSec=1min
+
+[Install]
+WantedBy=multi-user.target

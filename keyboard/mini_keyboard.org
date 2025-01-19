@@ -1,0 +1,48 @@
+#+title: Mini_keyboard
+
+* Info
+** mousewheel: left to right with, keys: bottom to top(wheel)
+** win+b = previous screen, win+n = next screen
+** shift+win+m = click center of current screen
+* Main Keyboard
+** layer 1: linux jk
+*** keyboard
+**** win+b , win+n, j (12x), k (12x)
+*** wheel
+**** click: shift+win+m
+**** scroll up: mouse wheel up, scroll down: mouse wheel down
+** layer 2: linux pageup
+*** keyboard
+**** win+b , win+n, page down, page up
+*** wheel
+**** click: shift+win+m
+**** scroll up: mouse wheel up, scroll down: mouse wheel down
+***** reversed from next one
+** layer 3: linux scroll reverse
+*** keyboard
+**** j+win+b , win+n, page down, page up
+***** accidental j
+*** wheel
+**** click: alt+esc
+**** scroll down: mouse wheel up, scroll up: mouse wheel down
+***** reversed from previous
+
+* Tablet Keyboard
+** layer 1: windows
+*** keyboard
+**** alt+esc , alt+esc, page up, page down
+*** wheel
+**** click: left click
+**** scroll up: mouse wheel up, scroll down: mouse wheel down
+** layer 2: media
+*** keyboard
+**** mute , prev track, next track, play/pause
+*** wheel
+**** click: stop
+**** scroll up: volume down, scroll down: volume up
+** layer 3: linux just mouse wheel
+*** keyboard
+**** +win+b , win+n, mouse wheel down, mouse wheel up
+*** wheel
+**** click: shift+win+m
+**** scroll down: mouse wheel up, scroll up: mouse wheel down

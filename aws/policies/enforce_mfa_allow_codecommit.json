@@ -1,0 +1,29 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowViewAccountInfo",
+            "Effect": "Allow",
+            "Action": "iam:ListVirtualMFADevices",
+            "Resource": "*"
+        },
+        {
+            "Sid": "DenyAllExceptListedIfNoMFA",
+            "Effect": "Deny",
+            "NotAction": [
+                "iam:ResyncMFADevice",
+                "sts:GetSessionToken",
+                "codecommit:GetBranch",
+                "codecommit:GetCommit",
+                "codecommit:GetRepository",
+                "codecommit:GitPull",
+                "codecommit:GitPush",
+                "codecommit:ListRepositories"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "BoolIfExists": {"aws:MultiFactorAuthPresent": "false"}
+            }
+        }
+    ]
+}

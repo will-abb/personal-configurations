@@ -1,0 +1,69 @@
+- name: Configure Ubuntu Pro Services
+  hosts: localhost
+  become: yes
+  vars:
+    ubuntu_pro_token: "{{ lookup('env', 'UBUNTU_PRO_TOKEN') }}"
+  tasks:
+    - name: Check Ubuntu Advantage status
+      command: sudo ua status
+      register: ua_status
+      ignore_errors: yes
+    - name: Display Ubuntu Advantage status
+      debug:
+        var: ua_status.stdout_lines
+    - name: Check Ubuntu Pro status
+      command: sudo pro status
+      register: pro_status
+      ignore_errors: yes
+    - name: Display Ubuntu Pro status
+      debug:
+        var: pro_status.stdout_lines
+    - name: Check Pro security status
+      command: pro security-status
+      register: pro_security_status
+      ignore_errors: yes
+    - name: Display Pro security status
+      debug:
+        var: pro_security_status.stdout_lines
+    - name: Attach Pro subscription
+      command: sudo pro attach {{ ubuntu_pro_token }}
+      register: attach_result
+      ignore_errors: yes
+    - name: Display attach result
+      debug:
+        var: attach_result.stdout_lines
+    - name: Enable esm-apps service
+      command: sudo pro enable esm-apps
+      register: esm_apps_result
+      ignore_errors: yes
+    - name: Display esm-apps enable result
+      debug:
+        var: esm_apps_result.stdout_lines
+    - name: Enable esm-infra service
+      command: sudo pro enable esm-infra
+      register: esm_infra_result
+      ignore_errors: yes
+    - name: Display esm-infra enable result
+      debug:
+        var: esm_infra_result.stdout_lines
+    - name: Enable livepatch service
+      command: sudo pro enable livepatch
+      register: livepatch_result
+      ignore_errors: yes
+    - name: Display livepatch enable result
+      debug:
+        var: livepatch_result.stdout_lines
+    - name: Enable realtime-kernel service
+      command: sudo pro enable realtime-kernel
+      register: realtime_kernel_result
+      ignore_errors: yes
+    - name: Display realtime-kernel enable result
+      debug:
+        var: realtime_kernel_result.stdout_lines
+    - name: Enable usg service
+      command: sudo pro enable usg
+      register: usg_result
+      ignore_errors: yes
+    - name: Display usg enable result
+      debug:
+        var: usg_result.stdout_lines

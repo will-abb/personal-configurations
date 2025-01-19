@@ -1,0 +1,71 @@
+- name: Setup OneDrive Client on Debian
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+    - name: Install necessary packages
+      apt:
+        name:
+          - build-essential
+          - libcurl4-openssl-dev
+          - libsqlite3-dev
+          - pkg-config
+          - git
+          - curl
+          - ca-certificates
+          - ldc
+        state: present
+    - name: Clone OneDrive client repository
+      git:
+        repo: 'https://github.com/abraunegg/onedrive.git'
+        dest: /opt/onedrive
+        version: master
+    - name: Build and install OneDrive client
+      shell: |
+        cd /opt/onedrive
+        ./configure
+        make
+        make install
+      args:
+        creates: /usr/local/bin/onedrive
+    - name: Create OneDrive config directory
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.config/onedrive"
+        state: directory
+        mode: '0755'
+    - name: Create OneDrive config file
+      copy:
+        dest: "{{ lookup('env', 'HOME') }}/.config/onedrive/config"
+        content: |
+          # Configuration for OneDrive
+          sync_dir = "~/OneDrive"
+          skip_file = "~*|.~*|*.tmp"
+          monitor_interval = "300"
+          # Add other configurations as necessary
+    - name: Set up OneDrive systemd service
+      become: yes
+      copy:
+        dest: /etc/systemd/system/onedrive.service
+        content: |
+          [Unit]
+          Description=OneDrive Free Client
+          Documentation=https://github.com/abraunegg/onedrive
+
+          [Service]
+          ExecStart=/usr/local/bin/onedrive --monitor
+          Restart=on-abort
+          User=%i
+
+          [Install]
+          WantedBy=default.target
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+    - name: Enable and start OneDrive service
+      systemd:
+        name: onedrive
+        enabled: yes
+        state: started
+        user: "{{ lookup('env', 'USER') }}"

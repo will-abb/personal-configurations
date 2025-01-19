@@ -1,0 +1,76 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: detect-aws-credentials
+        args: [--allow-missing-credentials]
+      - id: detect-private-key
+      - id: trailing-whitespace
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [--baseline, .secrets.baseline]
+        additional_dependencies: ['gibberish-detector']
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.3
+    hooks:
+      - id: python-safety-dependencies-check
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.1
+    hooks:
+      - id: pyupgrade
+        args: [--py310-plus]
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v3.14.0
+    hooks:
+      - id: reorder-python-imports
+        args: [--py310-plus]
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        args: ['--ignore=E501,W503,E203']
+  - repo: https://github.com/aufdenpunkt/pre-commit-js-beautify
+    rev: 1.13.0
+    hooks:
+      - id: js-beautify
+        args: [-r]
+        additional_dependencies: ['js-beautify@1.14.7']
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.15.0
+    hooks:
+      - id: yamlfmt
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.23.1
+    hooks:
+      - id: gitleaks
+        args:
+          - --baseline-path=.gitleaks_baseline.json
+          - --verbose
+  - repo: local
+    hooks:
+      - id: trufflehog
+        name: TruffleHog
+        description: Detect secrets in your data.
+        entry: bash -c 'trufflehog git file://. --since-commit HEAD --fail --no-update'
+        language: system
+        stages: ["commit", "push"]
+  - repo: local
+    # will not do anything unless patterns are added: see readme, or just add provider. Will only be triggered by tracked files
+    # git secrets --add-provider -- ~/repositories/bitbucket/williseed1/configs/repos-git/.custom_git_secrets_provider.sh
+    hooks:
+      - id: git-secrets
+        name: git-secrets
+        entry: git secrets --scan
+        language: system
+        files: '.*'
+        exclude: '.gitallowed'

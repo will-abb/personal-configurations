@@ -1,0 +1,44 @@
+- name: Copy Terminator and Zsh configs
+  hosts: localhost
+  become: no
+  gather_facts: yes
+  vars:
+    zsh_config_branch: "6-8-2024"
+  tasks:
+    - name: Ensure the Terminator config directory exists
+      file:
+        path: "{{ ansible_env.HOME }}/.config/terminator"
+        state: directory
+        mode: '0755'
+      tags: ["terminator"]
+    - name: Copy terminator.conf to Terminator config directory
+      copy:
+        src: "{{ ansible_env.HOME }}/repositories/bitbucket/williseed1/configs/shells/terminator.conf"
+        dest: "{{ ansible_env.HOME }}/.config/terminator/config"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: '0644'
+      tags: ["terminator"]
+    - name: Clone Zsh configuration repository
+      git:
+        repo: 'git@bitbucket.org:williseed1/zsh-config.git'
+        dest: "{{ ansible_env.HOME }}/.zsh-config"
+        clone: yes
+        update: yes
+        accept_hostkey: yes # Note: This might pose a security risk if the host key is not verified through other means.
+      tags: ["zsh"]
+    - name: Checkout specific branch
+      git:
+        repo: 'git@bitbucket.org:williseed1/zsh-config.git'
+        dest: "{{ ansible_env.HOME }}/.zsh-config"
+        version: "origin/{{ zsh_config_branch }}"
+      tags: ["zsh"]
+    - name: Create a symbolic link for .zshrc from the cloned repository
+      file:
+        src: "{{ ansible_env.HOME }}/.zsh-config/.zshrc"
+        dest: "{{ ansible_env.HOME }}/.zshrc"
+        state: link
+        force: yes
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+      tags: ["zsh", "yes"]

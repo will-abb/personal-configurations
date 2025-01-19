@@ -1,0 +1,21 @@
+#+title: Used_keys
+* These are all keys used for shortcuts
+1. super + v = toggle vpn
+2. super + j = toggle audio source
+3. super + w = copyq
+4. super + d = downloads file explorer
+5. super + i = settings
+6. super + f = personal firefox
+7. super + F = work firefox
+8. super + t = terminator
+9. super + e = emacs
+10. super + s = slack
+11. super + c = chrome
+12. super + o = window overview
+13. super +
+14. super +
+15. super +
+16. super +
+17. super +
+18. super +
+

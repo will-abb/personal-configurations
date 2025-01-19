@@ -1,0 +1,5 @@
+#+title: Kali
+
+* Boot Settings
+** Disabling secure boot might be necessary
+

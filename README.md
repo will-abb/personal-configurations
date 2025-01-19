@@ -1,6 +1,6 @@
 # Personal Configurations Repository
 
-Welcome to my personal configurations repository! This collection represents the custom setups, scripts, and configurations that I use across my environments for system administration, DevOps workflows, and productivity enhancements.
+Welcome to my personal configurations repository! This collection represents the custom setups, scripts, and configurations that I use across my environments for system administration, DevOps workflows, and productivity enhancements. This repository is for **demonstration purposes only**. 
 
 ## Overview
 
@@ -34,4 +34,4 @@ Feel free to explore the repository to gain insights into how I structure and ma
 
 ## Disclaimer
 
-This repository is for **demonstration purposes only**. While it reflects my personal configurations, sensitive details and private information have been excluded. Thank you for visiting! If you have questions or feedback, feel free to reach out.
+While it reflects my personal configurations, sensitive details and private information have been excluded. Thank you for visiting! If you have questions or feedback, feel free to reach out.

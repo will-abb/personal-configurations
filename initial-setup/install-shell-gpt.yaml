@@ -1,0 +1,28 @@
+- name: Install and Configure ShellGPT
+  hosts: localhost
+  become: false
+  vars:
+    venv_dir: "{{ ansible_env.HOME }}/virtual_environments/sgpt"
+  tasks:
+    - name: Ensure virtual environment directory exists
+      file:
+        path: "{{ venv_dir }}"
+        state: directory
+        mode: '0755'
+    - name: Create Python virtual environment
+      command:
+        cmd: python3 -m venv env
+        chdir: "{{ venv_dir }}"
+      args:
+        creates: "{{ venv_dir }}/env/bin/activate"
+    - name: Install ShellGPT
+      pip:
+        name: shell-gpt
+        virtualenv: "{{ venv_dir }}"
+    - name: Verify ShellGPT installation
+      command: "{{ venv_dir }}/bin/sgpt --version"
+      register: sgpt_version
+      changed_when: false
+    - name: Output ShellGPT version
+      debug:
+        msg: "ShellGPT successfully installed: {{ sgpt_version.stdout }}"

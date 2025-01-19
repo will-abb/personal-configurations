@@ -1,0 +1,27 @@
+- name: Install Chrysalis Keyboard Configuration Tool
+  hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Download Chrysalis zip archive
+      ansible.builtin.get_url:
+        url: https://github.com/keyboardio/Chrysalis/releases/download/v0.13.3/Chrysalis-linux-x64-0.13.3.zip
+        dest: "/tmp/Chrysalis.zip"
+        mode: '0644'
+    - name: Extract Chrysalis zip archive to /opt
+      ansible.builtin.unarchive:
+        src: "/tmp/Chrysalis.zip"
+        dest: "/opt"
+        remote_src: yes
+    - name: Create symbolic link to Chrysalis binary in /usr/local/bin
+      ansible.builtin.file:
+        src: "/opt/Chrysalis-linux-x64/Chrysalis"
+        dest: "/usr/local/bin/chrysalis"
+        state: link
+        force: yes
+    - name: Ensure chrome-sandbox is owned by root
+      ansible.builtin.file:
+        path: "/opt/Chrysalis-linux-x64/chrome-sandbox"
+        owner: root
+        group: root
+        mode: '4755'

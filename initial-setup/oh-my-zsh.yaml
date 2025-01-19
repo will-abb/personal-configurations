@@ -1,0 +1,26 @@
+- name: Install Oh My Zsh and Plugins
+  hosts: localhost
+  tasks:
+    - name: Install Oh My Zsh
+      shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+      args:
+        creates: ~/.oh-my-zsh/
+      tags: ['install oh-my-zsh']
+    - name: Set Zsh as default shell for current user
+      become: true
+      shell: chsh -s /usr/bin/zsh {{ lookup('env','USER') }}
+      tags: ['set zsh']
+    # Cloning zsh-autosuggestions repository
+    - name: Clone zsh-autosuggestions repository
+      git:
+        repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+      tags:
+        - zsh
+    # Cloning zsh-syntax-highlighting repository
+    - name: Clone zsh-syntax-highlighting repository
+      git:
+        repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git'
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+      tags:
+        - zsh

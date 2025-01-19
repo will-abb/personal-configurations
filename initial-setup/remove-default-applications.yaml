@@ -1,0 +1,36 @@
+- name: Uninstall default Ubuntu applications
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Remove Gnome Games (including various games)
+      apt:
+        name: gnome-games
+        state: absent
+    - name: Remove Solitaire (Aisleriot)
+      apt:
+        name: aisleriot
+        state: absent
+    - name: Remove Cheese (Webcam Application)
+      apt:
+        name: cheese
+        state: absent
+    - name: Remove Mahjong (Gnome Mahjongg)
+      apt:
+        name: gnome-mahjongg
+        state: absent
+    - name: Remove Mines (Gnome Mines)
+      apt:
+        name: gnome-mines
+        state: absent
+    - name: Remove Shotwell (Photo Manager)
+      apt:
+        name: shotwell
+        state: absent
+    - name: Remove Sudoku (Gnome Sudoku)
+      apt:
+        name: gnome-sudoku
+        state: absent
+    - name: Remove Thunderbird (Email Client)
+      apt:
+        name: thunderbird
+        state: absent
